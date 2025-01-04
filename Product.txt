@@ -1,0 +1,6 @@
+pc 1,10,640.0,PC
+pc 2,8,650.0,PC
+iph 16+,3,870.0,Phone
+Iph 11,10,330.0,Phone
+iph 13,30,400.0,Phone
+Iph 14,30,550.0,Phone

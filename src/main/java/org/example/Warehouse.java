@@ -6,7 +6,7 @@ public class Warehouse implements Restockable {
     private final int id;
     private int capacity;
     private List<Product> Products;
-    private Map<String, Category> categories; // Map to store categories by their names
+    private Map<String, Category> categories;
     private Map<String, SalesRecord> salesMap;
 
     public Warehouse(int id, int capacity) {
@@ -43,29 +43,40 @@ public class Warehouse implements Restockable {
         category.setWarehouse(this);
 
         for (Product product : category.getProducts()) {
-            addProduct(product);
+            addProduct(product, false);
         }
     }
 
-    public void addProduct(Product product) {
+    public void addProduct(Product product) {addProduct(product, false);}
+
+    public void addProduct(Product product, boolean showWarnings) {
+        for (Product existingProduct : Products) {
+            if (existingProduct.getName().equalsIgnoreCase(product.getName())) {
+                if (showWarnings) {
+                    System.out.println("Product '" + product.getName() + "' already exists in the warehouse. Skipping addition.");
+                }
+                return;
+            }
+        }
+
         if (getTotalStock() + product.getQuantity() > capacity) {
-            System.out.println("Cannot add main.Product. Exceeds capacity.");
+            System.out.println("Cannot add Product. Exceeds warehouse capacity.");
         } else {
             Products.add(product);
-            System.out.println("Product added. Current total stock: " + getTotalStock());
         }
     }
+
 
     public int getTotalStock() {
         return Products.stream().mapToInt(Product::getQuantity).sum();
     }
 
     public List<Product> getProducts() {
-        return new ArrayList<>(Products); // Return a copy of the Products list to avoid modification
+        return new ArrayList<>(Products);
     }
 
     public Map<String, Category> getCategories() {
-        return new HashMap<>(categories); // Return a copy of the categories map to avoid modification
+        return new HashMap<>(categories);
     }
 
     public void sellProductToRetailer(String productName, int quantity, Retailer retailer) {
@@ -75,7 +86,6 @@ public class Warehouse implements Restockable {
 
         Product productToSell = null;
 
-        // Find the product in the warehouse
         for (Product product : Products) {
             if (product.getName().equals(productName)) {
                 productToSell = product;
@@ -88,26 +98,26 @@ public class Warehouse implements Restockable {
             return;
         }
 
-        // Check if enough stock exists in the warehouse
         if (productToSell.getQuantity() < quantity) {
             System.out.println("Not enough stock of " + productName + " in the warehouse.");
             return;
         }
 
-        // Deduct stock from the warehouse
         productToSell.setQuantity(productToSell.getQuantity() - quantity);
-        System.out.println("Warehouse sold " + quantity + " units of " + productName +
-                " to retailer. Remaining stock: " + productToSell.getQuantity());
+        System.out.println("Successfully transferred " + quantity + " units of '" + productName +
+                "' from warehouse ID " + id + " to retailer at " + retailer.getLocation() + ".");
 
-        // Pass specific product stock to the retailer
         retailer.receiveStock(productName, quantity);
 
-        // Update warehouse sales record
         salesMap.putIfAbsent(productName, new SalesRecord(productName));
         salesMap.get(productName).addSale(quantity, productToSell.getPrice());
+
+        if (productToSell.getQuantity() < lowStockThreshold) {
+            System.out.println("ALERT: " + productToSell.getName() + " is below the stock threshold (" + lowStockThreshold + ").");
+        }
     }
 
-    // Display sales data
+
     public void displaySalesData() {
         if (salesMap.isEmpty()) {
             System.out.println("No sales data available.");
@@ -120,15 +130,18 @@ public class Warehouse implements Restockable {
         System.out.println("----------------------------------");
     }
 
-    // Get stock for a specific product
+
     public int getProductStock(String productName) {
         for (Product product : Products) {
             if (product.getName().equals(productName)) {
                 return product.getQuantity();
             }
         }
-        return -1; // Indicating product not found
+        return -1;
     }
+
+    private final int lowStockThreshold = 10;
+
 
     @Override
     public void restock(String productName, int amount) {
@@ -146,7 +159,7 @@ public class Warehouse implements Restockable {
     public List<Product> getLowStockProducts() {
         List<Product> lowStockProducts = new ArrayList<>();
         for (Product product : Products) {
-            if (product.getQuantity() < 10) {
+            if (product.getQuantity() < lowStockThreshold) {
                 lowStockProducts.add(product);
             }
         }
@@ -155,11 +168,17 @@ public class Warehouse implements Restockable {
 
     @Override
     public String toString() {
-        return "Warehouse{" +
-                "id=" + id +
-                ", capacity=" + capacity +
-                ", Products=" + Products +
-                ", categories=" + categories.values() +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Warehouse{")
+                .append("id=").append(id)
+                .append(", capacity=").append(capacity)
+                .append(", Products=").append(Products)
+                .append(", categories=[");
+
+        // Only list the category names to avoid duplication
+        categories.values().forEach(category -> sb.append(category.getCategoryName()).append(" "));
+        sb.append("]}");
+
+        return sb.toString();
     }
 }

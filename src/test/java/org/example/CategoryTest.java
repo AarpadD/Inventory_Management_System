@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CategoryTest {
 
-    // Test for the constructor that includes a Products array
     @Test
     void testConstructorWithProductsArray() {
-        // Arrange
         Supplier supplier = new Supplier(1, "Test Supplier");
         Product[] productsArray = {
                 new Product("Product A", 10, 15.0, "Electronics"),
@@ -18,10 +16,8 @@ class CategoryTest {
         String categoryName = "Electronics";
         int warehouseId = 101;
 
-        // Act
         Category category = new Category(categoryName, supplier, warehouseId, productsArray);
 
-        // Assert
         assertEquals(categoryName, category.getCategoryName(), "Category name should be initialized correctly");
         assertEquals(supplier, category.getSupplier(), "Supplier should be initialized correctly");
         assertEquals(warehouseId, category.getWarehouseId(), "Warehouse ID should be initialized correctly");
@@ -29,44 +25,37 @@ class CategoryTest {
         assertEquals("Product A", category.getProducts().get(0).getName(), "First product name is not correct");
     }
 
-    // Test for the constructor without a Products array
+
     @Test
     void testConstructorWithoutProductsArray() {
-        // Arrange
         Supplier supplier = new Supplier(2, "Another Supplier");
         String categoryName = "Furniture";
         int warehouseId = 202;
 
-        // Act
         Category category = new Category(categoryName, supplier, warehouseId);
 
-        // Assert
         assertEquals(categoryName, category.getCategoryName(), "Category name should be initialized correctly");
         assertEquals(supplier, category.getSupplier(), "Supplier should be initialized correctly");
         assertEquals(warehouseId, category.getWarehouseId(), "Warehouse ID should be initialized correctly");
         assertTrue(category.getProducts().isEmpty(), "Products list should be empty for this constructor");
     }
 
-    // Test for addProduct functionality
+
     @Test
     void testAddProduct() {
-        // Arrange
         Supplier supplier = new Supplier(1, "Test Supplier");
         Product newProduct = new Product("New Product", 15, 14.99, "Electronics");
         Category category = new Category("Electronics", supplier, 303);
 
-        // Act
         category.addProduct(newProduct);
 
-        // Assert
         assertEquals(1, category.getProducts().size(), "Product should be added to the list");
         assertTrue(category.getProducts().contains(newProduct), "The added product should exist in the list");
     }
 
-    // Test for getTotalQuantity functionality
+
     @Test
     void testGetTotalQuantity() {
-        // Arrange
         Supplier supplier = new Supplier(3, "Quantity Supplier");
         Product[] productsArray = {
                 new Product("Product X", 5, 20.0, "Food"),
@@ -75,17 +64,14 @@ class CategoryTest {
         };
         Category category = new Category("Food", supplier, 404, productsArray);
 
-        // Act
         int totalQuantity = category.getTotalQuantity();
 
-        // Assert
         assertEquals(25, totalQuantity, "Total quantity should be the sum of all product quantities");
     }
 
-    // Test for compareTo functionality
+
     @Test
     void testCompareTo() {
-        // Arrange
         Supplier supplier1 = new Supplier(4, "Supplier 1");
         Supplier supplier2 = new Supplier(5, "Supplier 2");
         Product[] category1Products = {
@@ -98,7 +84,6 @@ class CategoryTest {
         Category category1 = new Category("Electronics", supplier1, 505, category1Products);
         Category category2 = new Category("Clothing", supplier2, 606, category2Products);
 
-        // Act & Assert
         assertTrue(category1.compareTo(category2) > 0, "Category 1 should have a higher total quantity than Category 2");
         assertTrue(category2.compareTo(category1) < 0, "Category 2 should have a lower total quantity than Category 1");
         assertEquals(0, category1.compareTo(category1), "Category should be equal when compared to itself");

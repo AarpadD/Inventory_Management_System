@@ -49,7 +49,7 @@ public class Category implements Comparable<Category> {
     }
 
     public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse; // Set the warehouse reference
+        this.warehouse = warehouse;
     }
 
     public String getCategoryName() {
@@ -71,7 +71,6 @@ public class Category implements Comparable<Category> {
     public void addProduct(Product product) {
         Products.add(product);
 
-        // Synchronize with the warehouse if the associated Warehouse exists
         if (warehouse != null) {
             warehouse.addProduct(product);
         } else {

@@ -1,0 +1,2 @@
+PC,1,2,pc 1,pc 2
+Phone,1,1,iph 13,Iph 14,Iph 11,iph 16+
