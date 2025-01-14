@@ -1,3 +1,4 @@
-Tim 1,500,4
+Tim 1,500,13
   Stock:pc 1,2
   Stock:pc 2,2
+  Stock:iph 13,9
